@@ -2,13 +2,21 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<script id="nn-i18n">(function(){var L=["ko","en","zh","ja","uz","ru"],cur="ko",base="",K="nn_lang";
-function go(l){if(l===cur)return;var f=location.pathname.split("/").pop()||"index.html";location.replace((l==="ko"?base:base+l+"/")+f+location.search.replace(/[?&]lang=[a-z]+/,"").replace(/^&/,"?")+location.hash)}
-window.nnSetLang=function(l){try{localStorage.setItem(K,l)}catch(e){}go(l)};
+<script id="nn-i18n">(function(){var L=["ko","en","zh","ja","uz","ru"],P=["index.html", "1_perceptron.html", "2_activation.html", "3_cost_function.html", "4_normalization.html", "5_lab.html", "6_regions_probability.html", "answers.html"],cur="ko",K="nn_lang";
+var path=location.pathname.split("/"),last=path[path.length-1]||"",file="index.html",dir=location.href.split(/[?#]/)[0];dir=dir.slice(0,dir.lastIndexOf("/")+1);
+if(P.indexOf(last)>=0)file=last;else if(P.indexOf(last+".html")>=0)file=last+".html";else if(last&&last.indexOf(".")<0)dir=dir+last+"/";
+var root=cur==="ko"?dir:dir.replace(/[^\/]+\/$/,"");
+function url(l,f){return root+(l==="ko"?"":l+"/")+(f||file)}
+function tail(){return location.search.replace(/[?&]lang=[a-z]+/,"").replace(/^&/,"?")+location.hash}
+function has(u,cb){if(!/^https?:$/.test(location.protocol)){cb(true);return}try{fetch(u,{method:"HEAD",cache:"no-store"}).then(function(r){cb(r.ok)},function(){cb(false)})}catch(e){cb(false)}}
+function go(l,manual){if(l===cur)return;var u=url(l);has(u,function(ok){if(ok){location.replace(u+tail());return}
+if(manual){var i=url(l,"index.html");has(i,function(ok2){if(ok2)location.replace(i);else{alert("This language version has not been uploaded yet.");var s=document.querySelector(".langsel");if(s)s.value=cur}})}
+else{try{localStorage.removeItem(K)}catch(e){}}})}
+window.nnSetLang=function(l){try{localStorage.setItem(K,l)}catch(e){}go(l,true)};
 var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1],s=null;try{s=localStorage.getItem(K)}catch(e){}
-if(q&&L.indexOf(q)>=0){try{localStorage.setItem(K,q)}catch(e){}go(q);return}
-if(s&&L.indexOf(s)>=0){go(s);return}
-var n=(navigator.language||"ko").slice(0,2).toLowerCase();if(L.indexOf(n)>=0)go(n);})();</script>
+if(q&&L.indexOf(q)>=0){try{localStorage.setItem(K,q)}catch(e){}go(q,true);return}
+if(s&&L.indexOf(s)>=0){go(s,false);return}
+var n=(navigator.language||"ko").slice(0,2).toLowerCase();if(L.indexOf(n)>=0)go(n,false);})();</script>
 <meta name="description" content="퍼셉트론, 활성화 함수, 비용 함수, 정규화, SVM과 회귀를 가상 메일 660통과 움직이는 그림으로 배우는 다섯 편짜리 인터랙티브 해설 시리즈">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>신경망은 틀리면서 배운다 · 처음 화면</title>

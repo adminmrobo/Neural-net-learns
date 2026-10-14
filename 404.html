@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · 신경망은 틀리면서 배운다</title>
+<style>:root{color-scheme:light dark}body{margin:0;font-family:"IBM Plex Sans KR",system-ui,sans-serif;background:#12131d;color:#f1eff8;display:grid;place-items:center;min-height:100vh;padding:16px;box-sizing:border-box}
+@media (prefers-color-scheme:light){body{background:#f5f6f8;color:#141a24}}main{max-width:560px}h1{font-size:28px;margin:0 0 12px}p{line-height:1.7;margin:6px 0}a{color:#b39dff;font-weight:600}@media (prefers-color-scheme:light){a{color:#6a4bd8}}</style>
+</head><body><main>
+<h1>404</h1>
+<p>찾는 페이지가 없습니다. 이 언어판이 아직 올라가지 않았을 수 있습니다.</p>
+<p>Page not found. This language version may not be uploaded yet.</p>
+<p><a id="same" href="./">한국어판으로 보기 · Korean version</a> &nbsp; <a id="home" href="./">처음 화면 · Home</a></p>
+</main>
+<script>
+try{localStorage.removeItem("nn_lang")}catch(e){}
+(function(){var m=location.pathname.match(/^(.*\/)(en|zh|ja|uz|ru)\/([^\/]*)$/);var root=m?m[1]:location.pathname.replace(/[^\/]*$/,"");
+document.getElementById("home").href=root+"index.html";document.getElementById("same").href=root+(m&&m[3]?m[3]:"index.html");})();
+</script></body></html>
