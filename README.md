@@ -47,6 +47,7 @@
 ```
 ├── index.html                 처음 화면 (연구 지도)
 ├── 1_perceptron.html … 6_regions_probability.html   편 1~6 (한국어 원본)
+├── 404.html                   GitHub Pages 404
 ├── answers.html               교육자용 정답 (#a1 … #a6)
 ├── en/ zh/ ja/ uz/ ru/        (same file names / 같은 파일 이름)
 ├── code/                      정식 코드: common.py, f1~f6

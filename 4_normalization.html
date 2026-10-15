@@ -8,9 +8,9 @@ if(P.indexOf(last)>=0)file=last;else if(P.indexOf(last+".html")>=0)file=last+".h
 var root=cur==="ko"?dir:dir.replace(/[^\/]+\/$/,"");
 function url(l,f){return root+(l==="ko"?"":l+"/")+(f||file)}
 function tail(){return location.search.replace(/[?&]lang=[a-z]+/,"").replace(/^&/,"?")+location.hash}
-function has(u,cb){if(!/^https?:$/.test(location.protocol)){cb(true);return}try{fetch(u,{method:"HEAD",cache:"no-store"}).then(function(r){cb(r.ok)},function(){cb(false)})}catch(e){cb(false)}}
+function has(u,cb){if(!/^https?:$/.test(location.protocol)){cb(true);return}try{fetch(u,{method:"HEAD",cache:"no-store"}).then(function(r){cb(r.status!==404&&r.status!==410)},function(){cb(true)})}catch(e){cb(true)}}
 function go(l,manual){if(l===cur)return;var u=url(l);has(u,function(ok){if(ok){location.replace(u+tail());return}
-if(manual){var i=url(l,"index.html");has(i,function(ok2){if(ok2)location.replace(i);else{alert("This language version has not been uploaded yet.");var s=document.querySelector(".langsel");if(s)s.value=cur}})}
+if(manual){var i=url(l,"index.html");has(i,function(ok2){if(ok2)location.replace(i);else{alert("이 언어판 파일을 서버에서 찾지 못했습니다 / Language file not found on the server: "+url(l));var s=document.querySelector(".langsel");if(s)s.value=cur}})}
 else{try{localStorage.removeItem(K)}catch(e){}}})}
 window.nnSetLang=function(l){try{localStorage.setItem(K,l)}catch(e){}go(l,true)};
 var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1],s=null;try{s=localStorage.getItem(K)}catch(e){}
@@ -440,7 +440,8 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
 .chat{display:grid;gap:10px;margin:18px 0 0;max-width:760px}
 .say{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:start}
 .say .av{width:56px;height:56px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid var(--line-strong)}
-.say.haru .av{border-color:#e48aa8}.say.doc .av{border-color:var(--a)}.say.fly .av{border-color:var(--c3)}
+.say.haru .av{border-color:#e48aa8}.say.robo .av{border-color:var(--accent)}
+.robo-w{margin:10px 0 0}.robo-w .sbub p{font-size:15px}.say.doc .av{border-color:var(--a)}.say.fly .av{border-color:var(--c3)}
 .sbub{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 14px}
 .sbub::before{content:"";position:absolute;left:-7px;top:18px;width:12px;height:12px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
 .sbub b{display:block;font-size:13px;color:var(--ink-2);margin-bottom:2px}
@@ -1079,7 +1080,8 @@ let rs;window.addEventListener('resize',()=>{clearTimeout(rs);rs=setTimeout(()=>
 matchMedia('(prefers-color-scheme: light)').addEventListener?.('change',()=>{readC();redraws.forEach(f=>f())});
 function pills(sel,cb){const bs=[...document.querySelectorAll(sel)];bs.forEach(b=>b.addEventListener('click',()=>{bs.forEach(x=>x.setAttribute('aria-pressed',String(x===b)));cb(b)}))}
 const val=sel=>document.querySelector(sel+'[aria-pressed="true"]');
-return{MAIL,KIND,SETK,FNAME,sig,rngF,gauss,shuffle,getData,stdStats,ident,applyS,baseline,percRun,logRun,mlpRun,mlpInit,mlpP,ACTS,ACTNAME,readC,get C(){return C},setup,T,plane,rawLine,chart,bars,player,redraws,pills,val};
+function robo(id,st){const w=document.getElementById(id);if(!w||w.dataset.st===st)return;w.dataset.st=st;w.querySelectorAll('[data-rs]').forEach(e=>e.hidden=e.dataset.rs!==st)}
+return{robo,MAIL,KIND,SETK,FNAME,sig,rngF,gauss,shuffle,getData,stdStats,ident,applyS,baseline,percRun,logRun,mlpRun,mlpInit,mlpP,ACTS,ACTNAME,readC,get C(){return C},setup,T,plane,rawLine,chart,bars,player,redraws,pills,val};
 })();
 
 /* ===== 편별 메일 실습 ===== */
@@ -1096,6 +1098,7 @@ if($('pm-cv')){
   function draw(i){const s=R.snaps[i],L=ML.rawLine(s.w,s.b,R.s),pts=D.tr.map(r=>[r[1],r[2],r[3]]);
     ML.plane($('pm-cv'),{pts,line:L,hard:true,prob:(x,y)=>(L.a*x+L.c*y+L.e)>=0?1:0});
     const last=i===R.snaps.length-1,conv=R.snaps[R.snaps.length-1].err===0;
+    ML.robo('robo-pm',i===0?'idle':!last?(s.err>0?'wrong':'thinking'):conv?'success':'confused');
     $('pm-txt').innerHTML=`w = (${f2(s.w[0])}, ${f2(s.w[1])}), &nbsp;b = ${f2(s.b)}<br>이번 에포크에 틀려서 고친 횟수: <span class="hl">${s.err==null?'— (출발점)':s.err+'번'}</span>`;
     ML.bars($('pm-bars'),s.tr,s.te,base);
     ML.chart($('pm-err'),[{v:R.snaps.slice(1).map(x=>x.err),x:R.snaps.slice(1).map((_,k)=>k+1),c:col().b,name:'에포크마다 고친 횟수'}],{xmax:Math.max(R.snaps.length-1,1),ymin:0,int:true,cursor:i,xl:'에포크',h:170});
@@ -1162,6 +1165,7 @@ if($('gm-cv')){
   function draw(i){const s=R.snaps[i],L=ML.rawLine(s.w,s.b,R.s);
     ML.plane($('gm-cv'),{pts:D.tr.map(r=>[r[1],r[2],r[3]]),line:L,prob:(x,y)=>ML.sig(L.a*x+L.c*y+L.e)});
     ML.bars($('gm-bars'),s.tr,s.te,base);
+    {const last=i===R.snaps.length-1;ML.robo('robo-gm',i===0?'idle':!last?'thinking':(isFinite(s.Ltr)&&s.te>base+.02&&s.Ltr<.2)?'success':'confused')}
     ML.chart($('gm-loss'),[{v:R.snaps.map(x=>x.Ltr),c:col().acc,name:'학습 비용 J'},{v:R.snaps.map(x=>x.Lte),c:col().c,dash:[5,4],name:'시험 비용'}],{xmax:60,log:true,cursor:i,xl:'에포크',h:190});
     $('gm-txt').innerHTML=`w = (${f2(s.w[0])}, ${f2(s.w[1])}), &nbsp;b = ${f2(s.b)}<br>학습 비용 J = <span class="hl">${f3(s.Ltr)}</span> &nbsp; 시험 비용 = ${f3(s.Lte)}`;
     const L0=R.snaps[0].Ltr,Le=R.snaps[R.snaps.length-1].Ltr;

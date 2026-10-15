@@ -8,9 +8,9 @@ if(P.indexOf(last)>=0)file=last;else if(P.indexOf(last+".html")>=0)file=last+".h
 var root=cur==="ko"?dir:dir.replace(/[^\/]+\/$/,"");
 function url(l,f){return root+(l==="ko"?"":l+"/")+(f||file)}
 function tail(){return location.search.replace(/[?&]lang=[a-z]+/,"").replace(/^&/,"?")+location.hash}
-function has(u,cb){if(!/^https?:$/.test(location.protocol)){cb(true);return}try{fetch(u,{method:"HEAD",cache:"no-store"}).then(function(r){cb(r.ok)},function(){cb(false)})}catch(e){cb(false)}}
+function has(u,cb){if(!/^https?:$/.test(location.protocol)){cb(true);return}try{fetch(u,{method:"HEAD",cache:"no-store"}).then(function(r){cb(r.status!==404&&r.status!==410)},function(){cb(true)})}catch(e){cb(true)}}
 function go(l,manual){if(l===cur)return;var u=url(l);has(u,function(ok){if(ok){location.replace(u+tail());return}
-if(manual){var i=url(l,"index.html");has(i,function(ok2){if(ok2)location.replace(i);else{alert("This language version has not been uploaded yet.");var s=document.querySelector(".langsel");if(s)s.value=cur}})}
+if(manual){var i=url(l,"index.html");has(i,function(ok2){if(ok2)location.replace(i);else{alert("이 언어판 파일을 서버에서 찾지 못했습니다 / Language file not found on the server: "+url(l));var s=document.querySelector(".langsel");if(s)s.value=cur}})}
 else{try{localStorage.removeItem(K)}catch(e){}}})}
 window.nnSetLang=function(l){try{localStorage.setItem(K,l)}catch(e){}go(l,true)};
 var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1],s=null;try{s=localStorage.getItem(K)}catch(e){}
@@ -440,7 +440,8 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
 .chat{display:grid;gap:10px;margin:18px 0 0;max-width:760px}
 .say{display:grid;grid-template-columns:56px minmax(0,1fr);gap:12px;align-items:start}
 .say .av{width:56px;height:56px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid var(--line-strong)}
-.say.haru .av{border-color:#e48aa8}.say.doc .av{border-color:var(--a)}.say.fly .av{border-color:var(--c3)}
+.say.haru .av{border-color:#e48aa8}.say.robo .av{border-color:var(--accent)}
+.robo-w{margin:10px 0 0}.robo-w .sbub p{font-size:15px}.say.doc .av{border-color:var(--a)}.say.fly .av{border-color:var(--c3)}
 .sbub{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 14px}
 .sbub::before{content:"";position:absolute;left:-7px;top:18px;width:12px;height:12px;background:inherit;border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
 .sbub b{display:block;font-size:13px;color:var(--ink-2);margin-bottom:2px}
